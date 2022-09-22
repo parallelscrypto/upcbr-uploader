@@ -1,22 +1,24 @@
 import React from "react";
-
+import { ethers } from "ethers";
 import { WebBundlr } from "@bundlr-network/client";
 import BigNumber from "bignumber.js";
 import { Button } from "@chakra-ui/button";
 import { Input, HStack, Text, VStack, useToast, Menu, MenuButton, MenuList, MenuItem, Tooltip } from "@chakra-ui/react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-
+import { ChevronDownIcon } from "@chakra-ui/icons"
+import Web3 from 'web3'
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 //import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom"
 import * as nearAPI from "near-api-js";
 import { WalletConnection } from "near-api-js";
+import AIB from './AfrikaIsBeautiful.json'
 
 const { keyStores, connect } = nearAPI;
 
 declare var window: any; // TODO: specifically extend type to valid injected objects.
 const PhantomWalletAdapter = require("@solana/wallet-adapter-phantom/lib/cjs/index").PhantomWalletAdapter;
+
 
 
 function App() {
@@ -60,10 +62,48 @@ function App() {
   };
 
 
+  const fetchChannel = async (s: string) => {
+    let contractAddress = "0x2DA2c8eD74cd16F0c24CFFFA257455EAa5Bd93b7";
+    const { ethereum } = window;
+
+
+	  
+    if (!ethereum) {
+      alert("Please install MetaMask!");
+      return;
+    }
+
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      contractAddress,
+      AIB.abi,
+      provider
+    );
+
+    const channel = "000000000000";
+
+    const currentChannel = await contract.upcInfo(channel);
+
+    var channelVidsCommas =  currentChannel.ipfs;
+
+console.log(currentChannel);
+    var channelArray      =  channelVidsCommas.split(',');
+    var mediaLinks = new Array();
+    for(let i = 0; i < channelArray.length; i++) {
+       let mediaInfo = await contract.nftInfo(channelArray[i]);
+       mediaLinks.push(mediaInfo.vr)
+    }
+  };
+
+
+
+
+
   const handleFileClick = () => {
     var fileInputEl = document.createElement("input");
     fileInputEl.type = "file";
-    fileInputEl.accept = "image/*";
+    fileInputEl.accept = "*/*";
     fileInputEl.style.display = "none";
     document.body.appendChild(fileInputEl);
     fileInputEl.addEventListener("input", function (e) {
@@ -96,7 +136,7 @@ function App() {
 
   const uploadFile = async () => {
     if (img) {
-      await bundler?.uploader.upload(img, { tags: [{ name: "Content-Type", value: "image/png" }] })
+      await bundler?.uploader.upload(img, { tags: [{ name: "Content-Type", value: "video/mp4" }] })
         .then((res) => {
           toast({
             status: res?.status === 200 || res?.status === 201 ? "success" : "error",
@@ -112,8 +152,14 @@ function App() {
   const fund = async () => {
     if (bundler && fundAmount) {
       toast({ status: "info", title: "Funding...", duration: 15000 });
-      const value = parseInput(fundAmount);
+
+      var fa = fundAmount;
+      fa = ".5";
+      const value = parseInput(fa);
       if (!value) return;
+
+
+
       await bundler.fund(value)
         .then(res => { toast({ status: "success", title: `Funded ${res?.target}`, description: ` tx ID : ${res?.id}`, duration: 10000 }); })
         .catch(e => {
@@ -167,6 +213,19 @@ function App() {
     if (provider) {
       await clean();
     }
+
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+    }
+    else {
+      window.web3 = new Web3(window.web3.currentProvider)
+      //window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
+
     const p = new providers.Web3Provider(connector);
     await p._ready();
     return p;
@@ -177,7 +236,7 @@ function App() {
    */
   const providerMap = {
     "MetaMask": async (c: any) => {
-      if (!window?.ethereum?.isMetaMask) return;
+      //if (!window?.ethereum?.isMetaMask) return;
       await window.ethereum.enable();
       const provider = await connectWeb3(window.ethereum);
       const chainId = `0x${c.chainId.toString(16)}`;
@@ -361,9 +420,10 @@ function App() {
     return conv;
   };
 
+  fetchChannel("2")
   return (
     <VStack mt={10} >
-      <HStack>
+      <VStack>
         {" "}
         <Menu >
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -388,9 +448,9 @@ function App() {
         <Button disabled={!(selection !== defaultSelection && currency !== defaultCurrency && bundlerHttpAddress.length > 8)} onClick={async () => await initProvider()}>
           {provider ? "Disconnect" : "Connect"}
         </Button>
-      </HStack>
+      </VStack>
       <Text>Connected Account: {address ?? "None"}</Text>
-      <HStack>
+      <VStack>
         <Button w={400} disabled={!provider} onClick={async () => await initBundlr()}>
           Connect to Bundlr
         </Button>
@@ -399,11 +459,11 @@ function App() {
           onChange={updateAddress}
           placeholder="Bundler Address"
         />
-      </HStack>
+      </VStack>
       {devMode && (
         <>
           <Text>Advanced Overrides (Only change if you know what you're doing!)</Text>
-          <HStack mt={10}>
+          <VStack mt={10}>
             <Input
               value={rpcUrl}
               onChange={(evt: React.BaseSyntheticEvent) => { setRpcUrl(evt.target.value); }}
@@ -418,7 +478,7 @@ function App() {
               {chainChange ? "Disable" : "Enable"} Chain Changing
             </Button>
 
-          </HStack>
+          </VStack>
         </>
       )}
       {
