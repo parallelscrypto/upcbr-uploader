@@ -62,11 +62,9 @@ function App() {
   };
 
 
-  const fetchChannel = async (s: string) => {
+  const writeData = async (s: string) => {
     let contractAddress = "0x2DA2c8eD74cd16F0c24CFFFA257455EAa5Bd93b7";
     const { ethereum } = window;
-
-
 	  
     if (!ethereum) {
       alert("Please install MetaMask!");
@@ -78,22 +76,17 @@ function App() {
     const contract = new ethers.Contract(
       contractAddress,
       AIB.abi,
-      provider
+      signer
     );
 
+    var currentUpc  = window.location.href;
+    currentUpc = currentUpc.substring(currentUpc.lastIndexOf('/') +1)
+    //console.log(currentUpc)
+    //console.log(s)
     const channel = "000000000000";
 
-    const currentChannel = await contract.upcInfo(channel);
+    const currentChannel = await contract.setVr(currentUpc,s);
 
-    var channelVidsCommas =  currentChannel.ipfs;
-
-console.log(currentChannel);
-    var channelArray      =  channelVidsCommas.split(',');
-    var mediaLinks = new Array();
-    for(let i = 0; i < channelArray.length; i++) {
-       let mediaInfo = await contract.nftInfo(channelArray[i]);
-       mediaLinks.push(mediaInfo.vr)
-    }
   };
 
 
@@ -138,6 +131,9 @@ console.log(currentChannel);
     if (img) {
       await bundler?.uploader.upload(img, { tags: [{ name: "Content-Type", value: "video/mp4" }] })
         .then((res) => {
+
+          var newLink = `https://arweave.net/${res.data.id}`
+          writeData(newLink);
           toast({
             status: res?.status === 200 || res?.status === 201 ? "success" : "error",
             title: res?.status === 200 || res?.status === 201 ? "Successful!" : `Unsuccessful! ${res?.status}`,
@@ -420,7 +416,6 @@ console.log(currentChannel);
     return conv;
   };
 
-  fetchChannel("2")
   return (
     <VStack mt={10} >
       <VStack>
