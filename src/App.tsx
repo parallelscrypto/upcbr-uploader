@@ -12,7 +12,7 @@ import { Web3Provider } from "@ethersproject/providers";
 //import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom"
 import * as nearAPI from "near-api-js";
 import { WalletConnection } from "near-api-js";
-import AIB from './AfrikaIsBeautiful.json'
+import AIB from './DecolonizeAfrica.json'
 
 const { keyStores, connect } = nearAPI;
 
@@ -63,7 +63,7 @@ function App() {
 
 
   const writeData = async (s: string) => {
-    let contractAddress = "0x2DA2c8eD74cd16F0c24CFFFA257455EAa5Bd93b7";
+    let contractAddress = "0xF0176c005b5A453A5d8a7F5e3583fE52a28EDC5b";
     const { ethereum } = window;
 	  
     if (!ethereum) {
