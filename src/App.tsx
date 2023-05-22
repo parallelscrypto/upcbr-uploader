@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ArweaveWebWriter from './ArweaveWebWriter'
 
 function StackEditTab() {
   return (
@@ -14,7 +15,7 @@ function ArweaveWebWriterTab() {
   return (
     <div>
       <h2>ArweaveWebWriter Component</h2>
-      {/* Insert your ArweaveWebWriter component code here */}
+      <ArweaveWebWriter />
     </div>
   );
 }

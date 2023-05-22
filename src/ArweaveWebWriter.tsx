@@ -21,7 +21,7 @@ const PhantomWalletAdapter = require("@solana/wallet-adapter-phantom/lib/cjs/ind
 
 
 
-function App() {
+function ArweaveWebWriter() {
   const defaultCurrency = "Select a Currency";
   const defaultSelection = "Select a Provider";
   const [currency, setCurrency] = React.useState<string>(defaultCurrency);
@@ -590,4 +590,4 @@ function App() {
   );
 }
 
-export default App;
+export default ArweaveWebWriter;
