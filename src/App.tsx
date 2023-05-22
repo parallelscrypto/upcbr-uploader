@@ -6,7 +6,7 @@ function StackEditTab() {
     <iframe
       src="https://stackedit.io/app"
       title="StackEdit"
-      style={{ width: '100%', height: '100%', border: 'none' }}
+      style={{ width: '100vw', height: '100vh', border: 'none' }}
     ></iframe>
   );
 }
@@ -30,8 +30,8 @@ function App() {
   return (
     <div>
       <div>
-        <button onClick={() => handleTabChange('stackedit')}>StackEdit</button>
-        <button onClick={() => handleTabChange('arweave')}>Arweave Web Writer</button>
+        <button style={{width:"50vw",border:"2px solid",padding:"10px"}} onClick={() => handleTabChange('stackedit')}>StackEdit</button>
+        <button style={{width:"50vw",border:"2px solid",padding:"10px"}} onClick={() => handleTabChange('arweave')}>Arweave Web Writer</button>
       </div>
       <div style={{ marginTop: '20px' }}>
         {activeTab === 'stackedit' && <StackEditTab />}
