@@ -30,8 +30,8 @@ function App() {
   return (
     <div>
       <div>
-        <button style={{width:"50vw",border:"2px solid",padding:"10px"}} onClick={() => handleTabChange('stackedit')}>StackEdit</button>
-        <button style={{width:"50vw",border:"2px solid",padding:"10px"}} onClick={() => handleTabChange('arweave')}>Arweave Web Writer</button>
+        <button style={{width:"50vw",border:"2px solid",padding:"10px"}} onClick={() => handleTabChange('stackedit')}>build</button>
+        <button style={{width:"50vw",border:"2px solid",padding:"10px"}} onClick={() => handleTabChange('arweave')}>save</button>
       </div>
       <div style={{ marginTop: '20px' }}>
         {activeTab === 'stackedit' && <StackEditTab />}

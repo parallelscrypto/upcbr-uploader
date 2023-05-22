@@ -170,7 +170,7 @@ function ArweaveWebWriter() {
 
   const postHTML = async () => {
     if (bundler && uploadHTML) {
-      toast({ status: "info", title: "Posting your new website..", duration: 895000 });
+      toast({ status: "info", title: "Posting your new website..", duration: 85000 });
       const value = uploadHTML;
       if (!value) return;
       
@@ -182,9 +182,9 @@ function ArweaveWebWriter() {
           writeData(newLink);
           toast({
             status: res?.status === 200 || res?.status === 201 ? "success" : "error",
-            title: res?.status === 200 || res?.status === 201 ? "Successful!" : `Unsuccessful! ${res?.status}`,
+            title: res?.status === 200 || res?.status === 201 ? `Successful! ${newLink}` : `Unsuccessful! ${res?.status}`,
             description: res?.data.id ? `https://arweave.net/${res.data.id}` : undefined,
-            duration: 15000,
+            duration: 15000000,
           });
         })
         .catch(e => { toast({ status: "error", title: `Failed to upload - ${e}` }); });
