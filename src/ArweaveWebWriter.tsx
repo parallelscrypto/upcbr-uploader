@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import { WebBundlr } from "@bundlr-network/client";
 import BigNumber from "bignumber.js";
@@ -12,7 +12,7 @@ import { Web3Provider } from "@ethersproject/providers";
 //import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom"
 import * as nearAPI from "near-api-js";
 import { WalletConnection } from "near-api-js";
-import AIB from './DecolonizeAfrica.json'
+import AIB from './WelcomeHome.json'
 
 const { keyStores, connect } = nearAPI;
 
@@ -43,10 +43,53 @@ function ArweaveWebWriter() {
   const [fundAmount, setFundingAmount] = React.useState<string>();
   const [withdrawAmount, setWithdrawAmount] = React.useState<string>();
   const [uploadHTML, setUploadHTML] = React.useState<string>();
+  const [commandString, setCommandString] = React.useState<string>();
   const [provider, setProvider] = React.useState<Web3Provider>();
 
   const toast = useToast();
   const intervalRef = React.useRef<number>();
+
+
+  useEffect(() => {
+
+    //fetchCommandString();
+
+  }, [commandString]);
+
+
+
+  const fetchCommandString = async () => {
+    try {
+      // Your asynchronous logic here
+      // Perform your logic here to append the result to the commandString
+  
+      let contractAddress = "0x984224BeED35Af9f88A3B58C8df6F7c5BbAf0483";
+      const { ethereum } = window;
+  	  
+      if (!ethereum) {
+        alert("Please install MetaMask!");
+        return;
+      }
+  
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        contractAddress,
+        AIB.abi,
+        signer
+      );
+  
+      var currentUpc  = window.location.href;
+      currentUpc = currentUpc.substring(currentUpc.lastIndexOf('/') +1)
+  
+      const upcInfo = await contract.upcInfo(currentUpc);
+      return upcInfo.vr;
+
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
+
 
 
   const clean = async () => {
@@ -64,7 +107,7 @@ function ArweaveWebWriter() {
 
 
   const writeData = async (s: string) => {
-    let contractAddress = "0xF0176c005b5A453A5d8a7F5e3583fE52a28EDC5b";
+    let contractAddress = "0x984224BeED35Af9f88A3B58C8df6F7c5BbAf0483";
     const { ethereum } = window;
 	  
     if (!ethereum) {
@@ -173,12 +216,21 @@ function ArweaveWebWriter() {
       toast({ status: "info", title: "Posting your new website..", duration: 85000 });
       const value = uploadHTML;
       if (!value) return;
-      
+
+      var currentCommandString = await fetchCommandString();
+     
       var buf = Buffer.from(value, 'utf-8');
       await bundler?.uploader.upload(buf , { tags: [{ name: "Content-Type", value: "text/html" }] })
         .then((res) => {
 
-          var newLink = `https://arweave.net/${res.data.id}`
+          if (currentCommandString.substring(0, 3) === '>>>') {
+            currentCommandString += ">";
+          } else {
+            currentCommandString = ">>>";
+          }      
+ 
+          console.log("THE STRING  BEEEE" + currentCommandString);
+          var newLink = currentCommandString + `https://arweave.net/${res.data.id}`
           writeData(newLink);
           toast({
             status: res?.status === 200 || res?.status === 201 ? "success" : "error",
@@ -556,7 +608,7 @@ function ArweaveWebWriter() {
             </HStack>
             <HStack>
               <Button w={200} onClick={postHTML}>
-               Post 
+               Your HTML 
               </Button>
               <Textarea
                 placeholder={`Paste your HTML`}
