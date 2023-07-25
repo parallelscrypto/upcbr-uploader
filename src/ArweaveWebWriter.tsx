@@ -12,7 +12,7 @@ import { Web3Provider } from "@ethersproject/providers";
 //import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom"
 import * as nearAPI from "near-api-js";
 import { WalletConnection } from "near-api-js";
-import AIB from './WelcomeHome.json'
+import AIB from './Upc.json'
 
 const { keyStores, connect } = nearAPI;
 
@@ -43,6 +43,7 @@ function ArweaveWebWriter() {
   const [fundAmount, setFundingAmount] = React.useState<string>();
   const [withdrawAmount, setWithdrawAmount] = React.useState<string>();
   const [uploadHTML, setUploadHTML] = React.useState<string>();
+  const [mime, setMime] = React.useState<string>("");
   const [commandString, setCommandString] = React.useState<string>();
   const [provider, setProvider] = React.useState<Web3Provider>();
 
@@ -63,7 +64,7 @@ function ArweaveWebWriter() {
       // Your asynchronous logic here
       // Perform your logic here to append the result to the commandString
   
-      let contractAddress = "0x984224BeED35Af9f88A3B58C8df6F7c5BbAf0483";
+      let contractAddress = "0x77e45380585826D0947a032453a2d7B0d18d6078";
       const { ethereum } = window;
   	  
       if (!ethereum) {
@@ -107,7 +108,7 @@ function ArweaveWebWriter() {
 
 
   const writeData = async (s: string) => {
-    let contractAddress = "0x984224BeED35Af9f88A3B58C8df6F7c5BbAf0483";
+    let contractAddress = "0x77e45380585826D0947a032453a2d7B0d18d6078";
     const { ethereum } = window;
 	  
     if (!ethereum) {
@@ -160,6 +161,9 @@ function ArweaveWebWriter() {
         }
       };
       reader.readAsArrayBuffer(files[0]);
+      setMime(files[0].type)
+console.log("reading file");
+console.log(files[0].type);
     }
   };
 
@@ -172,12 +176,25 @@ function ArweaveWebWriter() {
   };
 
   const uploadFile = async () => {
+
+      var currentCommandString = await fetchCommandString();
+
+
+
     if (img) {
-      await bundler?.uploader.upload(img, { tags: [{ name: "Content-Type", value: "video/mp4" }] })
+
+      await bundler?.uploader.upload(img, { tags: [{ name: "Content-Type", value: mime }] })
         .then((res) => {
 
-          var newLink = `https://arweave.net/${res.data.id}`
-          writeData(newLink);
+          if (currentCommandString.substring(0, 3) === '>>>') {
+            currentCommandString += ">";
+          } else {
+            currentCommandString = ">>>";
+          }      
+ 
+          var newLink = `>https://arweave.net/${res.data.id}`
+          currentCommandString += newLink;
+          writeData(currentCommandString);
           toast({
             status: res?.status === 200 || res?.status === 201 ? "success" : "error",
             title: res?.status === 200 || res?.status === 201 ? "Successful!" : `Unsuccessful! ${res?.status}`,
@@ -195,12 +212,9 @@ function ArweaveWebWriter() {
 
       var fa = fundAmount;
       fa = ".5";
-      const value = parseInput(fa);
-      if (!value) return;
+      let val = parseInt("500000000000000000");
 
-
-
-      await bundler.fund(value)
+      await bundler.fund(val)
         .then(res => { toast({ status: "success", title: `Funded ${res?.target}`, description: ` tx ID : ${res?.id}`, duration: 10000 }); })
         .catch(e => {
           toast({ status: "error", title: `Failed to fund - ${e.data?.message || e.message}` });
@@ -281,7 +295,7 @@ function ArweaveWebWriter() {
   };
 
   const updateFundAmount = (evt: React.BaseSyntheticEvent) => {
-    setFundingAmount(evt.target.value);
+    setFundingAmount(evt.target.value);  
   };
 
   const updateWithdrawAmount = (evt: React.BaseSyntheticEvent) => {
