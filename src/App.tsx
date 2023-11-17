@@ -4,7 +4,7 @@ import ArweaveWebWriter from './ArweaveWebWriter';
 function AITab() {
   return (
     <iframe
-      src="https://gpt.h2o.ai"
+      src="https://zlvwrejjibv4hwt5vezipigo47ju4cyracxhp44hb6tqkrxq5biq.arweave.net/yutokSlAa8Pafakyh6DO59NOCxEArnfzhw-nBUbw6FE/index.html#/intel/eyJjb2RlIjoiODQyNTk1MTIxNzU5In0="
       title="AI"
       style={{ width: '100vw', height: '100vh', border: 'none' }}
     ></iframe>

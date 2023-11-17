@@ -64,7 +64,7 @@ function ArweaveWebWriter() {
       // Your asynchronous logic here
       // Perform your logic here to append the result to the commandString
   
-      let contractAddress = "0x77e45380585826D0947a032453a2d7B0d18d6078";
+      let contractAddress = "0x2C343942548319cCfc05666FF15d73E8569FaEdf";
       const { ethereum } = window;
   	  
       if (!ethereum) {
@@ -108,7 +108,7 @@ function ArweaveWebWriter() {
 
 
   const writeData = async (s: string) => {
-    let contractAddress = "0x77e45380585826D0947a032453a2d7B0d18d6078";
+    let contractAddress = "0x2C343942548319cCfc05666FF15d73E8569FaEdf";
     const { ethereum } = window;
 	  
     if (!ethereum) {
